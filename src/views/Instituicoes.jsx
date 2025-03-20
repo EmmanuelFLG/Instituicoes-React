@@ -59,7 +59,6 @@ const Instituicoes = () => {
 
   return (
     <>
-      <ToastContainer />
       <div>
         <Row className="mb-4">
           <Col>
@@ -191,6 +190,7 @@ const Instituicoes = () => {
           </Modal.Footer>
         </Form>
       </Modal>
+      <ToastContainer />
     </>
   );
 };
