@@ -7,10 +7,7 @@ const Main = () => {
   return (
     <main>
       <Container fluid className="mt-2">
-        {/* Carousel de Instituições */}
         <InstituicaoCarousel instituicoes={instituicoes} />
-        
-        {/* Propriedades */}
         <PropriedadesCard />
       </Container>
     </main>

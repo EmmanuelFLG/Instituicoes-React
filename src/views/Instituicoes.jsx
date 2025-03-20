@@ -1,36 +1,18 @@
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
 import InstituicoesTable from '../components/InstituicoesTable';
 import { useState, useEffect } from 'react';
-import * as Yup from 'yup';
-import { useFormik } from 'formik';  
-import { ToastContainer, toast } from 'react-toastify';  
-import 'react-toastify/dist/ReactToastify.css'; 
+import { useFormik } from 'formik';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import useInstituicao from '../context/InstituicaoContext';
 
 const Instituicoes = () => {
-  let [instituicoes, setInstituicoes] = useState([]);
-  let [show, setShow] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);  
-  const handleShow = () => setShow(!show);
-
-  const validationSchema = Yup.object({
-    uf: Yup.string().required('UF é obrigatório').matches(/^[^\d]*$/, 'UF não pode conter números'),
-    municipio: Yup.string().required('Município é obrigatório').matches(/^[^\d]*$/, 'Município não pode conter números'),
-    mesorregiao: Yup.string().required('Mesorregião é obrigatória').matches(/^[^\d]*$/, 'Mesorregião não pode conter números'),
-    microrregiao: Yup.string().required('Microrregião é obrigatória').matches(/^[^\d]*$/, 'Microrregião não pode conter números'),
-    nomedaescola: Yup.string().required('Nome da Escola é obrigatório').matches(/^[^\d]*$/, 'Nome da Escola não pode conter números'),
-    quantidadematriculas: Yup.number().required('Quantidade de Matrículas é obrigatória').positive('Deve ser um número positivo').integer('Deve ser um número inteiro'),
-  });
+  const { instituicoes, setInstituicoes, show, handleShow, InstituicaoInitialValues, validationSchema } = useInstituicao();
+  const [currentPage, setCurrentPage] = useState(1);
 
   const formik = useFormik({
-    initialValues: {
-      uf: '',
-      municipio: '',
-      mesorregiao: '',
-      microrregiao: '',
-      nomedaescola: '',
-      quantidadematriculas: '',
-    },
-    validationSchema,
+    initialValues: InstituicaoInitialValues,
+    validationSchema: validationSchema,
     onSubmit: (values) => {
       const formattedData = {
         UF: values.uf,
@@ -38,7 +20,7 @@ const Instituicoes = () => {
         Mesorregião: values.mesorregiao,
         Microrregião: values.microrregiao,
         "Nome da Escola": values.nomedaescola,
-        "Quantidade de Alunos": values.quantidadematriculas, 
+        "Quantidade de Alunos": values.quantidadematriculas,
       };
 
       fetch('http://localhost:3000/escolas', {
@@ -51,7 +33,7 @@ const Instituicoes = () => {
       }).then((response) => {
         if (response.ok) {
           getInstituicoes();
-          setShow(!show);
+          handleShow();
           toast.success('Instituição adicionada com sucesso!');
         } else {
           toast.error('Falha ao adicionar a instituição.');
@@ -61,13 +43,13 @@ const Instituicoes = () => {
   });
 
   const getInstituicoes = () => {
-    fetch("http://localhost:3000/escolas")
+    fetch('http://localhost:3000/escolas')
       .then((response) => response.json())
       .then((data) => {
         setInstituicoes(data);
       })
       .catch(() => {
-        console.log("Erro ao buscar instituições!");
+        console.log('Erro ao buscar instituições!');
       });
   };
 
@@ -84,9 +66,9 @@ const Instituicoes = () => {
             <div className="mb-3" style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#2c3e50' }}>
               Adicionar Nova Instituição
             </div>
-            <Button 
-              onClick={handleShow} 
-              variant="outline-primary" 
+            <Button
+              onClick={handleShow}
+              variant="outline-primary"
               className="mt-2"
               style={{ padding: '0.5rem 2rem', fontSize: '1rem', fontWeight: 'bold' }}
             >
@@ -96,11 +78,11 @@ const Instituicoes = () => {
         </Row>
       </div>
 
-      <InstituicoesTable 
-        instituicoes={instituicoes} 
-        setInstituicoes={setInstituicoes} 
-        currentPage={currentPage} 
-        setCurrentPage={setCurrentPage} 
+      <InstituicoesTable
+        instituicoes={instituicoes}
+        setInstituicoes={setInstituicoes}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
       />
 
       <Modal show={show} onHide={handleShow} size="lg">
@@ -185,7 +167,7 @@ const Instituicoes = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Quantidade de Matrículas</Form.Label>
+              <Form.Label>Quantidade de Alunos</Form.Label>
               <Form.Control
                 type="number"
                 name="quantidadematriculas"
